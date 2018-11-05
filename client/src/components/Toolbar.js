@@ -9,7 +9,9 @@ import {
   Tag,
   Button,
   Input,
-  Delete
+  Delete,
+  Field,
+  Control
 } from 'bloomer';
 import { connect } from 'react-redux';
 import { Spring, config, animated } from 'react-spring';
@@ -31,8 +33,9 @@ const PostBodyInput = styled(animated.textarea)`
   border: none;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
     0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
-  padding: 1em;
   margin-bottom: 1em;
+  padding: 0.8em;
+  font-size: 1em;
 `;
 
 class Toolbar extends Component {
@@ -42,7 +45,8 @@ class Toolbar extends Component {
     this.state = {
       tags: [],
       tagsInputValue: '',
-      isOpen: false
+      isOpen: false,
+      body: ''
     };
 
     this.onHandleChange = this.onHandleChange.bind(this);
@@ -57,7 +61,7 @@ class Toolbar extends Component {
     };
 
     this.props.onAddPost(data);
-    this.setState({ body: '', isOpen: false });
+    this.setState({ body: '', isOpen: false, tags: [] });
   };
 
   onHandleChange = e => {
@@ -115,7 +119,10 @@ class Toolbar extends Component {
         style={{ display: 'flex', flexFlow: 'column' }}
         onSubmit={this.onHandleSubmit}
       >
-        <Spring to={{ height: isOpen ? '200px' : '50px' }}>
+        <Spring
+          to={{ height: isOpen ? '300px' : '50px' }}
+          config={{ friction: isOpen ? 6 : 20 }}
+        >
           {styles => (
             <PostBodyInput
               name="body"
@@ -123,34 +130,53 @@ class Toolbar extends Component {
               onClick={this.openPostArea}
               onChange={this.onHandleChange}
               value={this.state.body}
+              placeholder="What are you grateful for today?"
             />
           )}
         </Spring>
-        <OnEvent space={e => this.addTag(e.target.value)}>
-          <Input
-            value={tagsInputValue}
-            onChange={e => {
-              this.updateTagValue(e.target.value);
-            }}
-            type="text"
-            placeholder="Tags seperated by space"
-          />
-        </OnEvent>
-        {tags &&
-          tags.map((tag, index) => (
-            <Tag
-              style={{ margin: '0.5em' }}
-              isColor="info"
-              isSize="medium"
-              key={index}
-            >
-              {tag}
-              <Delete onClick={e => this.removeTag(tag)} />
-            </Tag>
-          ))}
-        <br />
-        <Button type="submit">POST</Button>
-        <Button onClick={this.closePostArea}>CANCEL</Button>
+        {this.state.isOpen ? (
+          <div>
+            <OnEvent space={e => this.addTag(e.target.value)}>
+              <Input
+                value={tagsInputValue}
+                onChange={e => {
+                  this.updateTagValue(e.target.value);
+                }}
+                type="text"
+                placeholder="Tags seperated by space"
+              />
+            </OnEvent>
+            {tags &&
+              tags.map((tag, index) => (
+                <Tag
+                  style={{ margin: '0.5em' }}
+                  isColor="info"
+                  isSize="medium"
+                  key={index}
+                >
+                  {tag}
+                  <Delete onClick={e => this.removeTag(tag)} />
+                </Tag>
+              ))}
+            <br />
+            <Field isGrouped style={{ marginTop: '1em' }}>
+              <Control>
+                <Button
+                  isColor="success"
+                  type="submit"
+                  disabled={this.state.body.length <= 0}
+                >
+                  POST
+                </Button>
+              </Control>
+              <Control>
+                <Button isColor="danger" onClick={this.closePostArea}>
+                  CANCEL
+                </Button>
+              </Control>
+            </Field>
+          </div>
+        ) : null}
       </form>
     );
 

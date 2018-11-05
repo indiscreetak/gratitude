@@ -44,8 +44,6 @@ class Card extends Component {
             </CardHeaderIcon>
           </CardHeader>
           <CardContent>
-            {post.body}
-            <br />
             <span>
               {post.tags &&
                 post.tags.map((tag, index) => (
@@ -61,7 +59,9 @@ class Card extends Component {
             </span>
             <br />
             <span>
-              <small>{moment(post.date).format('h:mm:ss - DD/MM/YYYY')}</small>
+              <small>
+                {moment(post.date).format('dddd Mo YYYY - h:mm:ss')}
+              </small>
             </span>
           </CardContent>
         </Wrapper>
@@ -69,7 +69,7 @@ class Card extends Component {
     } else {
       posts = <div>No posts found</div>;
     }
-    return <Column>{this.props.posts > 1 ? posts.reverse() : posts}</Column>;
+    return <Column>{posts.length > 1 ? posts.reverse() : posts}</Column>;
   }
 }
 
