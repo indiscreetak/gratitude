@@ -12,7 +12,6 @@ import {
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import moment from 'moment';
-import axios from 'axios';
 import { deletePost } from '../store/actions/postActions';
 
 const Wrapper = styled(CardElement)`
@@ -27,7 +26,6 @@ class Card extends Component {
   }
 
   removePost = id => {
-    console.log('REMOVEPOST');
     this.props.onDeletePost(id);
   };
 

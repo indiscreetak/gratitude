@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import OnEvent from 'react-onevent';
 import './App.css';
 import { connect } from 'react-redux';
 import { getPosts } from './store/actions/postActions';

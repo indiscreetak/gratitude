@@ -10,14 +10,24 @@ export const getPosts = () => dispatch => {
         payload: res.data.posts
       })
     )
-    .catch(err => console.log(err));
+    .catch(err =>
+      dispatch({
+        type: actions.GET_ERRORS,
+        payload: err.message
+      })
+    );
 };
 
 export const deletePost = data => dispatch => {
   axios
     .delete(`/api/posts/${data}`)
     .then(res => dispatch(getPosts()))
-    .catch(err => console.log(err.data));
+    .catch(err =>
+      dispatch({
+        type: actions.GET_ERRORS,
+        payload: err.message
+      })
+    );
 };
 
 export const addPost = data => dispatch => {

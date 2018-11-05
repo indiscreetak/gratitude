@@ -1,20 +1,9 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import OnEvent from 'react-onevent';
-import {
-  Columns,
-  Column,
-  Box,
-  Card,
-  Tag,
-  Button,
-  Input,
-  Delete,
-  Field,
-  Control
-} from 'bloomer';
+import { Column, Tag, Button, Input, Delete, Field, Control } from 'bloomer';
 import { connect } from 'react-redux';
-import { Spring, config, animated } from 'react-spring';
+import { Spring, animated } from 'react-spring';
 import { addPost, getPosts } from '../store/actions/postActions';
 
 const Container = styled(Column)`
@@ -66,7 +55,6 @@ class Toolbar extends Component {
 
   onHandleChange = e => {
     this.setState({ [e.target.name]: e.target.value });
-    console.log(this.state);
   };
 
   openPostArea = () => {
