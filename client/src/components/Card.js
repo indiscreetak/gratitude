@@ -12,6 +12,8 @@ import {
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import moment from 'moment';
+import axios from 'axios';
+import { deletePost } from '../store/actions/postActions';
 
 const Wrapper = styled(CardElement)`
   margin: 1em;
@@ -24,41 +26,50 @@ class Card extends Component {
     this.state = {};
   }
 
-  render() {
-    const posts = this.props.posts.map(post => (
-      <Wrapper>
-        <CardHeader>
-          <CardHeaderTitle>{post.body}</CardHeaderTitle>
-          <CardHeaderIcon>
-            <Icon style={{ color: 'red' }} className="fa fa-trash" />
-          </CardHeaderIcon>
-        </CardHeader>
-        <CardContent>
-          {post.body}
-          <br />
-          <span>
-            {post.tags &&
-              post.tags.map((tag, index) => (
-                <Tag
-                  style={{ margin: '.5em' }}
-                  isSize="medium"
-                  isColor="info"
-                  key={index}
-                  onClick={e => this.removeTag(tag)}
-                >
-                  {tag}
-                </Tag>
-              ))}
-          </span>
-          <br />
-          <span>
-            <small>{moment(post.date).format('DD/MM/YYY')}</small>
-          </span>
-        </CardContent>
-      </Wrapper>
-    ));
+  removePost = id => {
+    console.log('REMOVEPOST');
+    this.props.onDeletePost(id);
+  };
 
-    return <Column>{posts}</Column>;
+  render() {
+    let posts;
+
+    if (this.props.posts) {
+      posts = this.props.posts.map((post, index) => (
+        <Wrapper key={index}>
+          <CardHeader>
+            <CardHeaderTitle>{post.body}</CardHeaderTitle>
+            <CardHeaderIcon onClick={() => this.removePost(post._id)}>
+              <Icon style={{ color: 'red' }} className="fa fa-trash" />
+            </CardHeaderIcon>
+          </CardHeader>
+          <CardContent>
+            {post.body}
+            <br />
+            <span>
+              {post.tags &&
+                post.tags.map((tag, index) => (
+                  <Tag
+                    style={{ margin: '.5em' }}
+                    isSize="medium"
+                    isColor="info"
+                    key={index}
+                  >
+                    {tag}
+                  </Tag>
+                ))}
+            </span>
+            <br />
+            <span>
+              <small>{moment(post.date).format('h:mm:ss - DD/MM/YYYY')}</small>
+            </span>
+          </CardContent>
+        </Wrapper>
+      ));
+    } else {
+      posts = <div>No posts found</div>;
+    }
+    return <Column>{this.props.posts > 1 ? posts.reverse() : posts}</Column>;
   }
 }
 
@@ -66,7 +77,9 @@ const mapStateToProps = state => ({
   posts: state.posts
 });
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+  onDeletePost: postId => dispatch(deletePost(postId))
+});
 
 export default connect(
   mapStateToProps,

@@ -1,7 +1,16 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import OnEvent from 'react-onevent';
-import { Columns, Column, Box, Card, Tag, Button } from 'bloomer';
+import {
+  Columns,
+  Column,
+  Box,
+  Card,
+  Tag,
+  Button,
+  Input,
+  Delete
+} from 'bloomer';
 import { connect } from 'react-redux';
 import { Spring, config, animated } from 'react-spring';
 import { addPost, getPosts } from '../store/actions/postActions';
@@ -24,8 +33,6 @@ const PostBodyInput = styled(animated.textarea)`
     0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
   padding: 1em;
   margin-bottom: 1em;
-  flex-grow: 1;
-  display: flex;
 `;
 
 class Toolbar extends Component {
@@ -33,7 +40,6 @@ class Toolbar extends Component {
     super(props);
 
     this.state = {
-      body: '',
       tags: [],
       tagsInputValue: '',
       isOpen: false
@@ -51,6 +57,7 @@ class Toolbar extends Component {
     };
 
     this.props.onAddPost(data);
+    this.setState({ body: '', isOpen: false });
   };
 
   onHandleChange = e => {
@@ -101,12 +108,26 @@ class Toolbar extends Component {
 
   render() {
     const { tags, tagsInputValue } = this.state;
+    const { isOpen } = this.state;
 
     const postForm = (
-      <form onSubmit={this.onHandleSubmit}>
-        <input name="body" onChange={this.onHandleChange} />
+      <form
+        style={{ display: 'flex', flexFlow: 'column' }}
+        onSubmit={this.onHandleSubmit}
+      >
+        <Spring to={{ height: isOpen ? '200px' : '50px' }}>
+          {styles => (
+            <PostBodyInput
+              name="body"
+              style={styles}
+              onClick={this.openPostArea}
+              onChange={this.onHandleChange}
+              value={this.state.body}
+            />
+          )}
+        </Spring>
         <OnEvent space={e => this.addTag(e.target.value)}>
-          <input
+          <Input
             value={tagsInputValue}
             onChange={e => {
               this.updateTagValue(e.target.value);
@@ -115,42 +136,35 @@ class Toolbar extends Component {
             placeholder="Tags seperated by space"
           />
         </OnEvent>
-        <button type="submit">ADD POST</button>
-        <div>
-          {tags &&
-            tags.map((tag, index) => (
-              <Tag
-                isColor="info"
-                key={index}
-                onClick={e => this.removeTag(tag)}
-              >
-                {tag}
-              </Tag>
-            ))}
-        </div>
+        {tags &&
+          tags.map((tag, index) => (
+            <Tag
+              style={{ margin: '0.5em' }}
+              isColor="info"
+              isSize="medium"
+              key={index}
+            >
+              {tag}
+              <Delete onClick={e => this.removeTag(tag)} />
+            </Tag>
+          ))}
+        <br />
+        <Button type="submit">POST</Button>
+        <Button onClick={this.closePostArea}>CANCEL</Button>
       </form>
     );
 
-    const { isOpen } = this.state;
     return (
       <div>
-        <Container style={{ backgroundColor: 'yellow' }}>
-          <Spring to={{ height: isOpen ? '200px' : '50px' }}>
-            {styles => (
-              <PostBodyInput style={styles} onClick={this.openPostArea} />
-            )}
-          </Spring>
-
-          <Button>POST</Button>
-          <Button onClick={this.closePostArea}>CANCEL</Button>
-        </Container>
+        <Container>{postForm}</Container>
       </div>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  posts: state.posts
+  posts: state.posts,
+  bodyValue: state.bodyValue
 });
 
 const mapDispatchToProps = dispatch => ({

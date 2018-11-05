@@ -3,6 +3,7 @@ import * as actions from '../actions/types';
 const initialState = {
   posts: [],
   errors: ''
+  // bodyValue: ''
 };
 
 export default (state = initialState, action) => {
@@ -21,8 +22,16 @@ export default (state = initialState, action) => {
     case actions.ADD_POST:
       return {
         ...state,
-        posts: state.posts.concat(action.payload)
+        posts: state.posts
+          ? state.posts.concat([action.payload])
+          : [action.payload]
       };
+    case actions.GET_ERRORS:
+      return {
+        ...state,
+        errors: action.payload
+      };
+
     default:
       return state;
   }

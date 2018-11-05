@@ -15,14 +15,9 @@ export const getPosts = () => dispatch => {
 
 export const deletePost = data => dispatch => {
   axios
-    .delete('/:id', data)
-    .then(res =>
-      dispatch({
-        type: actions.DELETE_POST,
-        payload: res.data.posts
-      })
-    )
-    .catch(err => console.log(err));
+    .delete(`/api/posts/${data}`)
+    .then(res => dispatch(getPosts()))
+    .catch(err => console.log(err.data));
 };
 
 export const addPost = data => dispatch => {
@@ -34,5 +29,10 @@ export const addPost = data => dispatch => {
         payload: res.data.post
       })
     )
-    .catch(err => console.log(err));
+    .catch(err =>
+      dispatch({
+        type: actions.GET_ERRORS,
+        payload: err.message
+      })
+    );
 };

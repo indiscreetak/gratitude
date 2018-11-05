@@ -7,7 +7,8 @@ const Posts = require('../models/posts');
 // @access PUBLIC
 
 router.get('/', (req, res) => {
-  Posts.find()
+  Posts.find({})
+    .sort({ date: 'asc' })
     .then(posts => {
       if (posts.length) {
         res.json({ posts });
@@ -24,20 +25,19 @@ router.get('/', (req, res) => {
 // @access PUBLIC
 
 router.post('/', (req, res) => {
-  Posts.findOne({ body: req.body.body }).then(profile => {
-    if (profile) {
-      res.status(400).json({ msg: 'You double posted' });
-    } else {
-      let post = {};
+  // if (post) {
+  //   res.json({ msg: 'You double posted' });
+  // } else {
+  let posted = {};
 
-      if (req.body.body) post.body = req.body.body;
-      if (req.body.tags) post.tags = req.body.tags;
+  if (req.body.body) posted.body = req.body.body;
+  if (req.body.tags) posted.tags = req.body.tags;
 
-      new Posts(post)
-        .save()
-        .then(post => res.json({ msg: 'Success', post: post }));
-    }
-  });
+  new Posts(posted)
+    .save()
+    .then(post => res.json({ msg: 'Success', post: post }))
+    .catch(err => res.json({ msg: 'Error' }));
+  // }
 });
 
 // @route DELETE /api/posts/:id

@@ -10,6 +10,7 @@ class App extends Component {
   componentDidMount() {
     this.props.onGetPosts();
   }
+
   render() {
     return (
       <div className="App">
